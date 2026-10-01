@@ -103,6 +103,20 @@ class MongoClientRepository extends BaseClientRepository {
             throw error;
         }
     }
+
+    async updateById(clientId, updateData) {
+        try {
+            const client = await this.model.findByIdAndUpdate(
+                clientId,
+                updateData,
+                { new: true, runValidators: true }
+            );
+            return client;
+        } catch (error) {
+            logger.error('Error updating client in db', error);
+            throw error;
+        }
+    }
 }
 
 

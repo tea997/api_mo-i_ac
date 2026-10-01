@@ -20,9 +20,7 @@
     transition: transform 300ms ease-in-out;
     width: 16rem;
     border-right: 1px solid hsl(var(--border) / 0.4);
-    background-color: hsl(var(--card) / 0.95);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background-color: #ffffff;
 
     &.closed {
         transform: translateX(-100%);
@@ -30,11 +28,6 @@
         @media (min-width: 1024px) {
             transform: translateX(0);
         }
-    }
-
-    // Support for backdrop-filter where available
-    @supports (backdrop-filter: blur(8px)) {
-        background-color: hsl(var(--card) / 0.6);
     }
 }
 

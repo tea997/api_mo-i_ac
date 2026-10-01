@@ -1,3 +1,7 @@
 node_modules
 logs
 .env
+.env.local
+.env.production
+scripts/.starlight-key
+dist

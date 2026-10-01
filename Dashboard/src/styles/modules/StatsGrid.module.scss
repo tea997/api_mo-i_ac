@@ -1,16 +1,180 @@
 .container {
     display: grid;
     grid-template-columns: repeat(1, minmax(0, 1fr));
-    gap: 1.5rem;
+    gap: 1rem;
 
-    @media (min-width: 768px) {
+    @media (min-width: 640px) {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     @media (min-width: 1024px) {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
+
+.statCard {
+    transition: all 300ms ease;
+    border: 1px solid hsl(var(--border) / 0.5);
+    background: hsl(var(--card) / 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px hsl(var(--primary) / 0.12);
+    }
+}
+
+.cardContent {
+    padding: 1.25rem;
+}
+
+.contentLayout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.textContent {
+    flex: 1 1 0%;
+}
+
+.title {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+    margin: 0 0 0.5rem 0;
+}
+
+.value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem 0;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+.subtitle {
+    font-size: 0.7rem;
+    color: hsl(var(--muted-foreground));
+    margin: 0;
+}
+
+.badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.125rem 0.4rem;
+    border-radius: 9999px;
+    margin-top: 0.125rem;
+
+    &.apdexExcellent { background: hsl(142, 76%, 36% / 0.15); color: hsl(142, 76%, 28%); }
+    &.apdexGood      { background: hsl(160, 70%, 36% / 0.15); color: hsl(160, 70%, 28%); }
+    &.apdexFair      { background: hsl(38, 92%, 50% / 0.15);  color: hsl(38, 92%, 33%); }
+    &.apdexPoor      { background: hsl(0, 90%, 60% / 0.15);   color: hsl(0, 90%, 43%); }
+    &.apdexNa        { background: hsl(var(--muted));           color: hsl(var(--muted-foreground)); }
+}
+
+.iconContainer {
+    padding: 0.625rem;
+    border-radius: 0.625rem;
+    transition: transform 300ms ease;
+
+    .statCard:hover & {
+        transform: scale(1.1);
+    }
+
+    svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+}
+
+.progressBar {
+    margin-top: 0.875rem;
+    height: 0.25rem;
+    width: 100%;
+    border-radius: 9999px;
+    opacity: 0.5;
+    transition: opacity 300ms ease;
+
+    .statCard:hover & {
+        opacity: 1;
+    }
+}
+
+// Gradient color definitions for value text
+.gradientBlue {
+    --tw-gradient-from: #3b82f6;
+    --tw-gradient-to: #06b6d4;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.gradientPurple {
+    --tw-gradient-from: #a855f7;
+    --tw-gradient-to: #ec4899;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.gradientRed {
+    --tw-gradient-from: #ef4444;
+    --tw-gradient-to: #f97316;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.gradientGreen {
+    --tw-gradient-from: #22c55e;
+    --tw-gradient-to: #10b981;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.gradientIndigo {
+    --tw-gradient-from: #6366f1;
+    --tw-gradient-to: #3b82f6;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.gradientYellow {
+    --tw-gradient-from: #eab308;
+    --tw-gradient-to: #f97316;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.gradientOrange {
+    --tw-gradient-from: #f97316;
+    --tw-gradient-to: #ef4444;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+// Background colors for icon containers
+.bgBlue   { background-color: rgba(59, 130, 246, 0.1); }
+.bgPurple { background-color: rgba(168, 85, 247, 0.1); }
+.bgRed    { background-color: rgba(239, 68, 68, 0.1); }
+.bgGreen  { background-color: rgba(34, 197, 94, 0.1); }
+.bgIndigo { background-color: rgba(99, 102, 241, 0.1); }
+.bgYellow { background-color: rgba(234, 179, 8, 0.1); }
+.bgOrange { background-color: rgba(249, 115, 22, 0.1); }
+
+// Text colors for icons
+.textBlue   { color: rgb(59, 130, 246); }
+.textPurple { color: hsl(var(--primary)); }
+.textRed    { color: rgb(239, 68, 68); }
+.textGreen  { color: rgb(34, 197, 94); }
+.textIndigo { color: rgb(99, 102, 241); }
+.textYellow { color: rgb(234, 179, 8); }
+.textOrange { color: rgb(249, 115, 22); }
+
+// Progress bar backgrounds
+.progressBlue   { background: linear-gradient(to right, #3b82f6, #06b6d4); }
+.progressPurple { background: linear-gradient(to right, #a855f7, #ec4899); }
+.progressRed    { background: linear-gradient(to right, #ef4444, #f97316); }
+.progressGreen  { background: linear-gradient(to right, #22c55e, #10b981); }
+.progressIndigo { background: linear-gradient(to right, #6366f1, #3b82f6); }
+.progressYellow { background: linear-gradient(to right, #eab308, #f97316); }
+.progressOrange { background: linear-gradient(to right, #f97316, #ef4444); }
+
 
 .statCard {
     transition: all 300ms ease;

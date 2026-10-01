@@ -46,3 +46,13 @@ export const loginSchema = {
     username: { required: true },
     password: { required: true },
 };
+
+/**
+ * Validation schema for public client self-registration.
+ */
+export const clientSelfRegisterSchema = {
+    companyName: { required: true },
+    username: { required: true },
+    email: { required: true },
+    password: { required: true, minLength: 8 }
+};

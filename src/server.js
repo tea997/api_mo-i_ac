@@ -25,9 +25,23 @@ const app = express();
  * Middlewares
  */
 app.use(helmet());
+
+// CORS: allow localhost in dev, and ALLOWED_ORIGINS in production
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+    : [];
+
 app.use(cors({
-    origin: true,
-    credentials: true
+    origin: (origin, callback) => {
+        // Allow requests with no origin (curl, Postman, server-to-server)
+        if (!origin) return callback(null, true);
+        // Allow localhost in development
+        if (process.env.NODE_ENV !== 'production') return callback(null, true);
+        // In production, check against allowed origins
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+        callback(new Error(`CORS: origin ${origin} not allowed`));
+    },
+    credentials: true,
 }));
 app.use(cookieParser())
 app.use(express.json());
@@ -111,12 +125,20 @@ async function initializeConnection() {
         await mongodb.connect();
 
         // Connect to PG;
-        await postgres.testConnection();
+        try {
+            await postgres.testConnection();
+        } catch (pgErr) {
+            logger.warn("PostgreSQL connection failed, proceeding without PG: " + pgErr.message);
+        }
 
         // Connect to RabbitMQ;
-        await rabbitmq.connect();
+        try {
+            await rabbitmq.connect();
+        } catch (rmqErr) {
+            logger.warn("RabbitMQ connection failed, proceeding without RabbitMQ: " + rmqErr.message);
+        }
 
-        logger.info("All connections established successfully");
+        logger.info("Database connection initialization completed");
     } catch (error) {
         logger.error("Failed to initialize connections:", error);
         throw error;

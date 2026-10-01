@@ -4,7 +4,7 @@ import { authApi } from '../api/api';
 import { Activity, Lock, User, Loader2, Zap } from 'lucide-react';
 import styles from '../styles/modules/Login.module.scss';
 
-function Login({ onLoginSuccess, onShowOnboarding }) {
+function Login({ onLoginSuccess, onShowOnboarding, onShowRegister }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -12,14 +12,14 @@ function Login({ onLoginSuccess, onShowOnboarding }) {
     const loginMutation = useMutation({
         mutationFn: authApi.login,
         onSuccess: (data) => {
-            if (data.success) {
+            if (data?.success) {
                 onLoginSuccess();
             } else {
-                setError(data.message);
+                setError(data?.message || 'Invalid username or password');
             }
         },
-        onError: (error) => {
-            setError(error.response?.data?.message || 'Failed to connect to server');
+        onError: (err) => {
+            setError(err.response?.data?.message || 'Invalid username or password');
         },
     });
 
@@ -136,21 +136,21 @@ function Login({ onLoginSuccess, onShowOnboarding }) {
                             </button>
                         </form>
                         <div className={styles.footerText}>
-                            First time here?{' '}
+                            New here?{' '}
                             <button
-                                onClick={onShowOnboarding}
+                                onClick={onShowRegister}
                                 style={{
                                     background: 'none',
                                     border: 'none',
                                     cursor: 'pointer',
                                     color: 'hsl(var(--primary))',
-                                    fontWeight: 500,
+                                    fontWeight: 600,
                                     fontSize: '0.875rem',
                                     textDecoration: 'underline',
                                     padding: 0,
                                 }}
                             >
-                                Set up Super Admin
+                                Create a free account →
                             </button>
                         </div>
                     </div>

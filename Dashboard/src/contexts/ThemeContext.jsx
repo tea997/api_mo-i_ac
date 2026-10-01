@@ -24,36 +24,22 @@ const themes = {
 };
 
 export function ThemeProvider({ children }) {
-    const [currentTheme, setCurrentTheme] = useState(() => {
-        if (typeof window !== 'undefined') {
-            const savedTheme = localStorage.getItem('app-theme');
-            return (savedTheme && themes[savedTheme]) ? savedTheme : 'purple';
-        }
-        return 'purple';
-    });
+    const [currentTheme] = useState('light');
 
     useEffect(() => {
         const root = document.documentElement;
+        root.classList.remove('theme-purple');
+        root.classList.add('theme-light');
+        localStorage.setItem('app-theme', 'light');
+    }, []);
 
-        Object.values(themes).forEach(theme => {
-            root.classList.remove(theme.class);
-        });
-
-        root.classList.add(themes[currentTheme].class);
-        localStorage.setItem('app-theme', currentTheme);
-    }, [currentTheme]);
-
-    const switchTheme = (themeName) => {
-        if (themes[themeName]) {
-            setCurrentTheme(themeName);
-        }
-    };
+    const switchTheme = () => {};
 
     const value = {
         currentTheme,
-        themes,
+        themes: { light: themes.light },
         switchTheme,
-        theme: themes[currentTheme]
+        theme: themes.light
     };
 
     return (

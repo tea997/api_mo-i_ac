@@ -34,6 +34,7 @@ export class AuthController {
             res.cookie("authToken", token, {
                 httpOnly: config.cookie.httpOnly,
                 secure: config.cookie.secure,
+                sameSite: config.cookie.sameSite,
                 maxAge: config.cookie.expiresIn
             });
 
@@ -42,6 +43,30 @@ export class AuthController {
             next(error)
         }
     };
+
+    /**
+     * Handles public client self-registration.
+     */
+    async clientSelfRegister(req, res, next) {
+        try {
+            const { companyName, username, email, password } = req.body;
+            const { token, user } = await this.authService.clientSelfRegister({
+                companyName, username, email, password
+            });
+
+            res.cookie("authToken", token, {
+                httpOnly: config.cookie.httpOnly,
+                secure: config.cookie.secure,
+                sameSite: config.cookie.sameSite,
+                maxAge: config.cookie.expiresIn
+            });
+
+            res.status(201).json(ResponseFormatter.success(user, "Account created successfully", 201));
+        } catch (error) {
+            next(error);
+        }
+    };
+
 
     /**
      * Registers a new user.
@@ -61,6 +86,7 @@ export class AuthController {
             res.cookie("authToken", token, {
                 httpOnly: config.cookie.httpOnly,
                 secure: config.cookie.secure,
+                sameSite: config.cookie.sameSite,
                 maxAge: config.cookie.expiresIn
             });
 
@@ -84,6 +110,7 @@ export class AuthController {
             res.cookie("authToken", token, {
                 httpOnly: config.cookie.httpOnly,
                 secure: config.cookie.secure,
+                sameSite: config.cookie.sameSite,
                 maxAge: config.cookie.expiresIn
             });
 

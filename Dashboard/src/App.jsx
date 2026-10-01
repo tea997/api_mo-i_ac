@@ -15,28 +15,37 @@ const ClientOnboardingPage = lazy(() => import('./pages/ClientOnboardingPage'));
 const ClientUsersPage = lazy(() => import('./pages/ClientUsersPage'));
 const ApiKeyPage = lazy(() => import('./pages/ApiKeyPage'));
 const OnboardSuperAdminPage = lazy(() => import('./pages/OnboardSuperAdminPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
+const EndpointsPage = lazy(() => import('./pages/EndpointsPage'));
+const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const WatchdogPage = lazy(() => import('./pages/WatchdogPage'));
 
 const pageFallback = (
-    <div style={{ height: '60vh', display: 'grid', placeItems: 'center' }}>Loading…</div>
+    <div style={{ height: '60vh', display: 'grid', placeItems: 'center', background: '#ffffff' }}>Loading…</div>
 );
 
 function AuthGate() {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
     const [user, setUser] = useState(null);
     const [showOnboarding, setShowOnboarding] = useState(false);
+    const [showRegister, setShowRegister] = useState(false);
     const queryClient = useQueryClient();
 
     useEffect(() => {
         const controller = new AbortController();
         authApi.getProfile({ signal: controller.signal })
             .then((res) => {
-                setUser(res.data);
-                setIsAuthenticated(true);
-            })
-            .catch((err) => {
-                if (err.name !== 'CanceledError' && err.name !== 'AbortError') {
+                if (res?.data) {
+                    setUser(res.data);
+                    setIsAuthenticated(true);
+                } else {
+                    setUser(null);
                     setIsAuthenticated(false);
                 }
+            })
+            .catch(() => {
+                setUser(null);
+                setIsAuthenticated(false);
             });
         return () => controller.abort();
     }, []);
@@ -45,8 +54,11 @@ function AuthGate() {
         try {
             const res = await authApi.getProfile();
             setUser(res.data);
-        } catch { }
-        setIsAuthenticated(true);
+            setIsAuthenticated(true);
+        } catch {
+            setUser(null);
+            setIsAuthenticated(false);
+        }
     }, []);
 
     const handleLogout = useCallback(async () => {
@@ -57,19 +69,17 @@ function AuthGate() {
     }, [queryClient]);
 
     useEffect(() => {
-        if (isAuthenticated !== true) return;
         const handle401 = () => {
-            queryClient.clear();
             setUser(null);
             setIsAuthenticated(false);
         };
         window.addEventListener('auth:unauthorized', handle401);
         return () => window.removeEventListener('auth:unauthorized', handle401);
-    }, [isAuthenticated, queryClient]);
+    }, []);
 
     if (isAuthenticated === null) {
         return (
-            <div style={{ height: '100vh', display: 'grid', placeItems: 'center' }}>
+            <div style={{ height: '100vh', display: 'grid', placeItems: 'center', background: '#ffffff' }}>
                 Checking authentication…
             </div>
         );
@@ -86,10 +96,21 @@ function AuthGate() {
                 </Suspense>
             );
         }
+        if (showRegister) {
+            return (
+                <Suspense fallback={pageFallback}>
+                    <RegisterPage
+                        onSuccess={handleLoginSuccess}
+                        onBack={() => setShowRegister(false)}
+                    />
+                </Suspense>
+            );
+        }
         return (
             <Login
                 onLoginSuccess={handleLoginSuccess}
                 onShowOnboarding={() => setShowOnboarding(true)}
+                onShowRegister={() => setShowRegister(true)}
             />
         );
     }
@@ -104,6 +125,9 @@ function AuthGate() {
                 <Suspense fallback={pageFallback}>
                     <Routes>
                         <Route path="/" element={<OverviewPage />} />
+                        <Route path="/endpoints" element={<EndpointsPage />} />
+                        <Route path="/services" element={<ServicesPage />} />
+                        <Route path="/watchdog" element={<WatchdogPage />} />
                         <Route path="/settings" element={<SettingsPage />} />
                         {isSuperAdmin && (
                             <Route path="/clients" element={<ClientOnboardingPage />} />

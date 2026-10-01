@@ -5,17 +5,121 @@ import logger from "../../../shared/config/logger.js"
 import bcrypt from "bcryptjs";
 import { APPLICATION_ROLES } from "../../../shared/constants/roles.js";
 
+import crypto from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
+
 /**
  * AuthService handles user authentication and authorization related operations such as onboarding super admin, user registration, login, and fetching user profile.
  * It interacts with the UserRepository to perform these operations and generates JWT tokens for authenticated users.
  */
 export class AuthService {
-    constructor(userRepository) {
-        if (!userRepository) {
-            throw new Error("UserRepository is Required");
+    constructor(dependencies) {
+        if (!dependencies) {
+            throw new Error("UserRepository/Dependencies is Required");
         }
-        this.userRepository = userRepository;
+        if (dependencies.userRepository) {
+            this.userRepository = dependencies.userRepository;
+            this.clientRepository = dependencies.clientRepository;
+            this.apiKeyRepository = dependencies.apiKeyRepository;
+        } else {
+            this.userRepository = dependencies;
+        }
     };
+
+    generateSlug(name) {
+        return name.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim();
+    }
+
+    generateApiKey() {
+        const prefix = "apim";
+        const randomBytes = crypto.randomBytes(20).toString("hex");
+        return `${prefix}_${randomBytes}`;
+    }
+
+    /**
+     * Self-registers a new Client and Client Admin user.
+     */
+    async clientSelfRegister(data) {
+        try {
+            const { companyName, username, email, password } = data;
+
+            // Check if username/email exists
+            const existingUser = await this.userRepository.findByUsername(username);
+            if (existingUser) {
+                throw new AppError("Username already exists", 409);
+            }
+            const existingEmail = await this.userRepository.findByEmail(email);
+            if (existingEmail) {
+                throw new AppError("Email already exists", 409);
+            }
+
+            // Create client organization (createdBy is set after user is created)
+            const slug = this.generateSlug(companyName);
+            let client = null;
+            if (this.clientRepository) {
+                const existingClient = await this.clientRepository.findBySlug(slug);
+                if (existingClient) {
+                    throw new AppError("An organization with this name already exists", 409);
+                }
+
+                client = await this.clientRepository.create({
+                    name: companyName,
+                    slug,
+                    email,
+                    description: `Self-registered client ${companyName}`,
+                });
+            }
+
+            // Create Client Admin user
+            const user = await this.userRepository.create({
+                username,
+                email,
+                password,
+                role: APPLICATION_ROLES.CLIENT_ADMIN,
+                clientId: client ? client._id : null,
+                permissions: {
+                    canCreateApiKeys: true,
+                    canManageUsers: true,
+                    canViewAnalytics: true,
+                    canExportData: true
+                }
+            });
+
+            if (client) {
+                await this.clientRepository.updateById(client._id, { createdBy: user._id });
+            }
+
+            // Auto-generate initial API Key if repository available
+            if (client && this.apiKeyRepository) {
+                const keyId = uuidv4();
+                const keyValue = this.generateApiKey();
+                await this.apiKeyRepository.create({
+                    keyId,
+                    keyValue,
+                    clientId: client._id,
+                    name: "Default API Key",
+                    description: "Auto-generated upon self-registration",
+                    environment: "production",
+                    createdBy: user._id
+                });
+            }
+
+            const token = this.generateToken(user);
+            logger.info("Client self-registered successfully", { username: user.username, companyName });
+
+            return {
+                user: this.formatUserForResponse(user),
+                token
+            };
+        } catch (error) {
+            logger.error("Error in Client Self-Registration", error);
+            throw error;
+        }
+    }
 
     /**
      * Generates a JWT token for the given user.

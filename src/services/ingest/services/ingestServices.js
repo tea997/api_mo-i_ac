@@ -1,13 +1,10 @@
 import logger from '../../../shared/config/logger.js';
 import AppError from '../../../shared/utils/AppError.js';
 import { v4 as uuidv4 } from 'uuid';
+import ApiHit from '../../../shared/models/ApiHits.js';
 
 /**
- * Service class responsible for handling the business logic of ingesting API hit data. The IngestService class takes an EventProducer as a dependency, which is used to publish API hit events to RabbitMQ. The ingestApiHit method validates the incoming hit data, constructs an event object, and attempts to publish it using the EventProducer. If the circuit breaker rejects the request, it returns a response indicating that the service is temporarily unavailable. The validateHitData method ensures that all required fields are present and valid before processing the hit data.
- * @class IngestService
- * @constructor
- * @param {Object} dependencies - The dependencies required by the IngestService.
- * @param {EventProducer} dependencies.eventProducer - The event producer instance for publishing events to RabbitMQ.
+ * Service class responsible for handling the business logic of ingesting API hit data.
  */
 export class IngestService {
     constructor({ eventProducer }) {
@@ -17,8 +14,7 @@ export class IngestService {
 
     /**
      * Ingests an API hit by validating the hit data and publishing an event to RabbitMQ.
-     * @param {Object} hitData - The API hit data to be ingested.
-     * @returns {Promise<Object>} - The result of the ingestion, including the event ID and status.
+     * If RabbitMQ is unavailable, gracefully persists directly to MongoDB.
      */
     async ingestApiHit(hitData) {
         try {
@@ -36,25 +32,32 @@ export class IngestService {
                 apiKeyId: hitData.apiKeyId,
                 ip: hitData.ip || 'unknown',
                 userAgent: hitData.userAgent || '',
+            };
+
+            let published = false;
+            try {
+                published = await this.eventProducer.publishApiHit(event);
+            } catch (rmqError) {
+                logger.warn('RabbitMQ publish unavailable, falling back to direct MongoDB persistence:', { error: rmqError.message });
             }
 
-            const published = await this.eventProducer.publishApiHit(event);
-
             if (!published) {
-                // Circuit breaker rejected the request
-                logger.warn('API hit rejected by circuit breaker', {
-                    eventId: event.eventId,
-                    endpoint: event.endpoint,
-                    method: event.method,
-                    clientId: event.clientId,
-                });
-
-                return {
-                    eventId: event.eventId,
-                    status: 'rejected',
-                    reason: 'service_unavailable',
-                    timestamp: event.timestamp,
-                };
+                try {
+                    await ApiHit.create(event);
+                    logger.info('API hit recorded directly to MongoDB', {
+                        eventId: event.eventId,
+                        endpoint: event.endpoint,
+                        clientId: event.clientId,
+                    });
+                    return {
+                        eventId: event.eventId,
+                        status: 'queued',
+                        timestamp: event.timestamp,
+                    };
+                } catch (dbErr) {
+                    logger.error('Failed to persist API hit to database:', dbErr);
+                    throw dbErr;
+                }
             }
 
             logger.info('API hit ingested', {

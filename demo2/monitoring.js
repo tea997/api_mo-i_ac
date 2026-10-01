@@ -8,13 +8,12 @@ const monitoringMiddleware = (options = {}) => {
     const {
         apiKey = process.env.MONITORING_API_KEY,
         endpoint = process.env.MONITORING_ENDPOINT || 'http://localhost:5000/api/hit',
-        serviceName = process.env.SERVICE_NAME || 'my-service',
+        serviceName = process.env.SERVICE_NAME || 'demo2-service',
         enableLogging = process.env.NODE_ENV !== 'production',
         timeout = 3000,
         enabled = process.env.MONITORING_ENABLED !== 'false'
     } = options;
 
-    // If monitoring is disabled or no API key, return pass-through middleware
     if (!enabled || !apiKey) {
         if (enableLogging && !apiKey) {
             console.warn('Monitoring middleware: API key not configured');
@@ -24,15 +23,12 @@ const monitoringMiddleware = (options = {}) => {
 
     return (req, res, next) => {
         const startTime = Date.now();
-
-        // Capture the original response end function
         const originalEnd = res.end;
 
         res.end = function (...args) {
             const endTime = Date.now();
             const responseTime = endTime - startTime;
 
-            // Prepare monitoring data
             const monitoringData = {
                 serviceName: serviceName,
                 endpoint: req.originalUrl || req.url,
@@ -43,12 +39,10 @@ const monitoringMiddleware = (options = {}) => {
                 userAgent: req.get('User-Agent') || 'unknown'
             };
 
-            // Send monitoring data asynchronously (don't block response)
             setImmediate(() => {
                 sendMonitoringData(monitoringData, { apiKey, endpoint, enableLogging, timeout });
             });
 
-            // Call original end function
             originalEnd.apply(res, args);
         };
 
@@ -59,11 +53,11 @@ const monitoringMiddleware = (options = {}) => {
 async function sendMonitoringData(data, options) {
     try {
         if (options.enableLogging) {
-            console.log('Sending monitoring data:', {
+            console.log('📡 Sending monitoring hit:', {
                 endpoint: data.endpoint,
                 method: data.method,
-                statusCode: data.statusCode,
-                latencyMs: data.latencyMs
+                status: data.statusCode,
+                latency: `${data.latencyMs}ms`
             });
         }
 
@@ -76,16 +70,11 @@ async function sendMonitoringData(data, options) {
         });
 
         if (options.enableLogging) {
-            console.log('Monitoring data sent successfully');
+            console.log('✅ Monitoring hit recorded');
         }
     } catch (error) {
-        // Fail silently to not disrupt the main application
         if (options.enableLogging) {
-            if (error.response) {
-                console.error('Failed to send monitoring data:', error.response.status, error.response.data?.message || error.response.statusText);
-            } else {
-                console.error('Failed to send monitoring data:', error.message);
-            }
+            console.error('⚠️ Monitoring telemetry failed (non-blocking):', error.response?.data?.message || error.message);
         }
     }
 }

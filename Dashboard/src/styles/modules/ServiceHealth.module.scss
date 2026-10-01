@@ -1,0 +1,218 @@
+.headerIcon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    background: linear-gradient(135deg, hsl(142, 76%, 36%), hsl(160, 76%, 36%));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        color: #fff;
+    }
+}
+
+.headerRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.headerSummary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.summaryHealthy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    background: hsl(142, 76%, 36% / 0.1);
+    color: hsl(142, 76%, 30%);
+
+    svg { width: 0.75rem; height: 0.75rem; }
+}
+
+.summaryCritical {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    background: hsl(0, 90%, 60% / 0.1);
+    color: hsl(0, 90%, 45%);
+
+    svg { width: 0.75rem; height: 0.75rem; }
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+
+    @media (min-width: 640px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (min-width: 1280px) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.serviceCard {
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    animation: fadeUp 350ms ease forwards;
+    opacity: 0;
+    transform: translateY(6px);
+
+    &.cardHealthy {
+        background: hsl(142, 76%, 36% / 0.04);
+        border-color: hsl(142, 76%, 36% / 0.2);
+    }
+
+    &.cardDegraded {
+        background: hsl(38, 92%, 50% / 0.04);
+        border-color: hsl(38, 92%, 50% / 0.2);
+    }
+
+    &.cardCritical {
+        background: hsl(0, 90%, 60% / 0.04);
+        border-color: hsl(0, 90%, 60% / 0.2);
+    }
+}
+
+@keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.serviceTop {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.serviceIcon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.serviceInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.serviceName {
+    font-size: 0.875rem;
+    font-weight: 700;
+    margin: 0;
+    color: hsl(var(--foreground));
+    text-transform: capitalize;
+}
+
+.healthBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.1rem 0.4rem;
+    border-radius: 9999px;
+    width: fit-content;
+
+    svg { width: 0.65rem; height: 0.65rem; }
+
+    &.healthHealthy {
+        background: hsl(142, 76%, 36% / 0.15);
+        color: hsl(142, 76%, 30%);
+    }
+
+    &.healthDegraded {
+        background: hsl(38, 92%, 50% / 0.15);
+        color: hsl(38, 92%, 35%);
+    }
+
+    &.healthCritical {
+        background: hsl(0, 90%, 60% / 0.15);
+        color: hsl(0, 90%, 45%);
+    }
+}
+
+.serviceStats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.statLabel {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: hsl(var(--muted-foreground));
+    font-weight: 600;
+}
+
+.statValue {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: hsl(var(--foreground));
+
+    &.statValueError { color: hsl(0, 90%, 45%); }
+    &.statValueWarn  { color: hsl(38, 92%, 40%); }
+}
+
+.availBar {
+    height: 4px;
+    background: hsl(var(--muted) / 0.5);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.availFill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 600ms ease;
+
+    &.fillHealthy  { background: linear-gradient(90deg, hsl(142, 76%, 36%), hsl(160, 76%, 40%)); }
+    &.fillDegraded { background: linear-gradient(90deg, hsl(38, 92%, 45%), hsl(38, 92%, 55%)); }
+    &.fillCritical { background: linear-gradient(90deg, hsl(0, 90%, 45%), hsl(0, 90%, 55%)); }
+}
+
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem;
+    text-align: center;
+    gap: 0.75rem;
+    color: hsl(var(--muted-foreground));
+}
+
+.emptyIcon {
+    width: 2.5rem;
+    height: 2.5rem;
+}

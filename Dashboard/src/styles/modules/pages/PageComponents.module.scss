@@ -31,9 +31,7 @@
 
 .sectionCard {
   border: 1px solid hsl(var(--border) / 0.5);
-  background: hsl(var(--card) / 0.5);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: #ffffff;
 }
 
 .formGroup {

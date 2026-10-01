@@ -1,13 +1,6 @@
 .container {
     min-height: 100vh;
-
-    &.themePurple {
-        background: linear-gradient(to bottom right, #020617, #581c87, #020617);
-    }
-
-    &.themeLight {
-        background: linear-gradient(to bottom right, #f9fafb, #ffffff);
-    }
+    background: #ffffff;
 }
 
 .mainContent {
@@ -24,13 +17,7 @@
     z-index: 30;
     width: 100%;
     border-bottom: 1px solid hsl(var(--border) / 0.4);
-    background: hsl(var(--background) / 0.95);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-
-    @supports (backdrop-filter: blur(8px)) {
-        background: hsl(var(--background) / 0.6);
-    }
+    background: #ffffff;
 }
 
 .headerContent {

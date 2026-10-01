@@ -6,6 +6,10 @@
   "scripts": {
     "start": "node src/server.js",
     "consumer": "node src/services/processor/consumer.js",
+    "demo:setup": "node scripts/setup-starlight.js",
+    "demo:hits": "node scripts/starlight-hits.js",
+    "demo:live": "node scripts/starlight-hits.js --continuous",
+    "demo:burst": "node scripts/starlight-hits.js --burst",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

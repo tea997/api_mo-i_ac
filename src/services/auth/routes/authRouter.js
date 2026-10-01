@@ -3,7 +3,7 @@ import dependencies from "../Dependencies/dependencies.js"
 import authorize from "../../../shared/middlewares/authorize.js"
 import authenticate from "../../../shared/middlewares/authenticate.js"
 import validate from "../../../shared/middlewares/validate.js";
-import { onboardSuperAdminSchema, loginSchema, registrationSchema } from "../validation/authSchema.js";
+import { onboardSuperAdminSchema, loginSchema, registrationSchema, clientSelfRegisterSchema } from "../validation/authSchema.js";
 import { APPLICATION_ROLES } from "../../../shared/constants/roles.js";
 
 const router = express.Router();
@@ -13,6 +13,11 @@ const authController = controller.authController
 router.post("/onboard-super-admin",
     validate(onboardSuperAdminSchema),
     (req, res, next) => authController.onboardSuperAdmin(req, res, next)
+)
+
+router.post("/client-register",
+    validate(clientSelfRegisterSchema),
+    (req, res, next) => authController.clientSelfRegister(req, res, next)
 )
 
 router.post("/register",

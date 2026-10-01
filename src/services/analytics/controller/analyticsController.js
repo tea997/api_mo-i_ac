@@ -133,6 +133,7 @@ export class AnalyticsController {
             const dashboard = {
                 stats,
                 topEndpoints,
+                recentActivity: recentTimeSeries,
                 recentActitivy: recentTimeSeries
             }
 

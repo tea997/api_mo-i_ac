@@ -10,6 +10,7 @@
     flex-direction: row;
     position: relative;
     overflow: hidden;
+    background: #ffffff;
 }
 
 /* ---- Left Illustration Side ---- */
@@ -17,10 +18,8 @@
     display: none;
     position: relative;
     flex: 1;
-    background: linear-gradient(135deg,
-            hsl(265, 80%, 20%),
-            hsl(245, 70%, 30%),
-            hsl(275, 85%, 25%));
+    background: #f8fafc;
+    border-right: 1px solid hsl(214, 32%, 91%);
     overflow: hidden;
     align-items: center;
     justify-content: center;
@@ -42,38 +41,30 @@
     width: 4.5rem;
     height: 4.5rem;
     margin: 0 auto 1.5rem;
-    background: linear-gradient(135deg,
-            hsla(265, 80%, 60%, 0.3),
-            hsla(245, 70%, 60%, 0.3));
-    border: 1px solid hsla(265, 80%, 60%, 0.4);
+    background: hsla(263, 70%, 50%, 0.1);
+    border: 1px solid hsla(263, 70%, 50%, 0.2);
     border-radius: 1.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(12px);
 
     svg {
         width: 2.25rem;
         height: 2.25rem;
-        color: hsl(265, 80%, 80%);
+        color: hsl(263, 70%, 50%);
     }
 }
 
 .illustrationTitle {
     font-size: 2.25rem;
     font-weight: 800;
-    background: linear-gradient(135deg,
-            hsl(265, 80%, 85%),
-            hsl(245, 75%, 80%));
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: hsl(220, 20%, 15%);
     margin: 0 0 0.75rem;
     letter-spacing: -0.02em;
 }
 
 .illustrationSubtitle {
-    color: hsla(265, 40%, 75%, 0.8);
+    color: hsl(220, 10%, 45%);
     font-size: 1rem;
     line-height: 1.6;
     margin: 0 0 2rem;
@@ -90,7 +81,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: hsla(265, 40%, 80%, 0.9);
+    color: hsl(220, 10%, 35%);
     font-size: 0.9rem;
 }
 
@@ -110,7 +101,7 @@
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    background: hsl(var(--background));
+    background: #ffffff;
 
     @media (min-width: 1024px) {
         max-width: 40rem;
@@ -125,36 +116,7 @@
 }
 
 .backgroundOrb {
-    position: absolute;
-    width: 20rem;
-    height: 20rem;
-    border-radius: 50%;
-    mix-blend-mode: screen;
-    filter: blur(5rem);
-    opacity: 0.15;
-    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-
-    &.orb1 {
-        top: -8rem;
-        right: -8rem;
-        background-color: hsl(265, 80%, 60%);
-    }
-
-    &.orb2 {
-        bottom: -8rem;
-        left: -8rem;
-        background-color: hsl(245, 70%, 60%);
-        animation-delay: 1.5s;
-    }
-
-    &.orb3 {
-        top: 50%;
-        left: 30%;
-        width: 14rem;
-        height: 14rem;
-        background-color: hsl(285, 80%, 55%);
-        animation-delay: 3s;
-    }
+    display: none;
 }
 
 /* ---- Login Card ---- */
@@ -195,13 +157,13 @@
 .title {
     font-size: 1.75rem;
     font-weight: 700;
-    color: hsl(var(--foreground));
+    color: hsl(220, 20%, 15%);
     margin: 0;
     letter-spacing: -0.02em;
 }
 
 .description {
-    color: hsl(var(--muted-foreground));
+    color: hsl(220, 10%, 45%);
     font-size: 0.9rem;
     margin: 0;
 }
@@ -236,7 +198,7 @@
 .label {
     font-size: 0.85rem;
     font-weight: 500;
-    color: hsl(var(--foreground));
+    color: hsl(220, 15%, 20%);
 }
 
 .inputContainer {
@@ -256,15 +218,15 @@
 .input {
     width: 100%;
     padding: 0.7rem 0.75rem 0.7rem 2.5rem;
-    border: 1px solid hsl(var(--border));
+    border: 1px solid hsl(220, 15%, 85%);
     border-radius: 0.5rem;
-    background: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background: #ffffff;
+    color: hsl(220, 15%, 15%);
     font-size: 0.875rem;
     transition: all 0.2s ease;
 
     &::placeholder {
-        color: hsl(var(--muted-foreground));
+        color: hsl(220, 10%, 60%);
     }
 
     &:focus {
@@ -331,7 +293,7 @@
     margin-top: 1.5rem;
     text-align: center;
     font-size: 0.85rem;
-    color: hsl(var(--muted-foreground));
+    color: hsl(220, 10%, 45%);
 }
 
 .credentialsHighlight {
@@ -342,45 +304,7 @@
 /* ---- Light Theme Adjustments ---- */
 :global(.theme-light) {
     .illustrationSide {
-        background: linear-gradient(135deg,
-                hsl(220, 60%, 30%),
-                hsl(230, 50%, 40%),
-                hsl(240, 45%, 35%));
-    }
-
-    .illustrationLogo {
-        background: hsla(220, 60%, 50%, 0.2);
-        border-color: hsla(220, 60%, 50%, 0.3);
-
-        svg {
-            color: hsl(220, 60%, 80%);
-        }
-    }
-
-    .illustrationTitle {
-        background: linear-gradient(135deg,
-                hsl(220, 60%, 90%),
-                hsl(230, 50%, 85%));
-        background-clip: text;
-        -webkit-background-clip: text;
-    }
-
-    .logoContainer {
-        background: linear-gradient(135deg,
-                hsl(220, 70%, 45%),
-                hsl(210, 80%, 55%));
-        box-shadow: 0 8px 24px hsla(220, 70%, 45%, 0.25);
-    }
-
-    .submitButton {
-        background: linear-gradient(135deg,
-                hsl(220, 70%, 45%),
-                hsl(210, 80%, 55%));
-        box-shadow: 0 4px 15px hsla(220, 70%, 45%, 0.25);
-
-        &:hover:not(:disabled) {
-            box-shadow: 0 8px 25px hsla(220, 70%, 45%, 0.35);
-        }
+        background: #f8fafc;
     }
 }
 

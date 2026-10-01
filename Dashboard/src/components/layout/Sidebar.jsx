@@ -7,17 +7,41 @@ import {
     Users,
     Building2,
     KeyRound,
+    Globe,
+    Layers,
+    ShieldAlert,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from '../../styles/modules/layout/Sidebar.module.scss';
 
 const navItems = [
     {
-        title: 'Overview',
+        title: 'Dashboard',
         href: '/',
         icon: LayoutDashboard,
         description: 'Main dashboard view',
         roles: null, // visible to all
+    },
+    {
+        title: 'Endpoints',
+        href: '/endpoints',
+        icon: Globe,
+        description: 'All monitored API endpoints',
+        roles: null,
+    },
+    {
+        title: 'Services',
+        href: '/services',
+        icon: Layers,
+        description: 'Microservice health',
+        roles: null,
+    },
+    {
+        title: 'Watchdog',
+        href: '/watchdog',
+        icon: ShieldAlert,
+        description: 'Anomaly history & alerts',
+        roles: null,
     },
     {
         title: 'Clients',
